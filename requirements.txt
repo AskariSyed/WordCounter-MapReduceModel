@@ -1,6 +1,8 @@
 streamlit
 PyPDF2
 matplotlib
-seaborn
 wordcloud
 pandas
+plotly
+nltk
+

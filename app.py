@@ -19,6 +19,12 @@ with st.sidebar:
     uploaded_file = st.file_uploader("Upload a .txt or .pdf file", type=["txt", "pdf"])
     num_cores = os.cpu_count()  # Get the number of available CPU cores
     num_mappers = st.slider("Select number of mapper threads", min_value=2, max_value=num_cores, value=4)
+    remove_stop = st.sidebar.toggle("🧹 Remove Stop Words", value=True)
+
+if remove_stop:
+    st.info("Stop words will be removed from the analysis.")
+else:
+    st.warning("Stop words will be included in the analysis.")
 
 if uploaded_file:
     # Spinner to show that the file is being processed
@@ -31,7 +37,8 @@ if uploaded_file:
 
     # Spinner to indicate cleaning the text
     with st.spinner("Cleaning and preparing the text..."):
-        words = clean_text(raw_text)
+        words = clean_text(raw_text, remove_stopwords=remove_stop)
+
         st.write(f"📚 Total words to process: **{len(words)}**")
 
     # Process the chunks in threads
@@ -54,7 +61,7 @@ if uploaded_file:
     # Reduce the counts
     final_word_count = reduce_counts(result_dict)
 
-    # Show visualizations
+    
     st.subheader("Top Words Visualization")
     viz_option = st.radio("Select Visualization Type", ["Bar Chart", "Word Cloud", "Treemap", "Pie Chart","All of the Above"])
 
@@ -74,15 +81,13 @@ if uploaded_file:
 
     show_mapper_stats(mapper_meta)
 
-    # Word Count Table
     st.subheader("📋 Word Count Table")
     word_count_df = pd.DataFrame(final_word_count.items(), columns=["Word", "Count"])
     word_count_df = word_count_df.sort_values(by="Count", ascending=False)
 
-    # Add a text input for searching
+   
     search_term = st.text_input("Search for a word:")
 
-    # If there's a search term, filter the dataframe
     if search_term:
         filtered_df = word_count_df[word_count_df['Word'].str.contains(search_term, case=False, na=False)]
     else:

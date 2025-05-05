@@ -10,7 +10,6 @@ class MapperThread(threading.Thread):
         self.result_dict = result_dict
         self.meta_dict = meta_dict 
         self.lock = lock
-
     def run(self):
         start = time.time()
         local_count = Counter(self.words)
