@@ -1,7 +1,7 @@
 import string
 from nltk.corpus import stopwords
 import nltk
-
+import PyPDF2
 
 def read_pdf(pdf_file):
     reader = PyPDF2.PdfReader(pdf_file)
